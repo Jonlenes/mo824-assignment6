@@ -120,7 +120,19 @@ public class GA_QBFPT extends GA_QBF {
         return bestSol;
     }
 
+    @Override
+    protected Chromosome generateRandomChromosome() {
+        Chromosome chromosome;
+        do {
+            chromosome = new Chromosome();
+            for (int i = 0; i < chromosomeSize; i++) {
+                chromosome.add(rng.nextInt(2));
+            }
 
+        } while (isProhibited(chromosome));
+
+        return chromosome;
+    }
 
     public static void main(String[] args) throws IOException {
 
