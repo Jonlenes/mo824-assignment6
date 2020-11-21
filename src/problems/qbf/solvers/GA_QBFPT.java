@@ -69,14 +69,16 @@ public class GA_QBFPT extends GA_QBF {
     }
 
     //Checa se o cromossomo forma uma tripla proibida
-    public boolean isProhibited(Chromosome candidate){
+    public boolean isProhibited(Chromosome candidate, boolean verbose){
         for(Integer[] triple : triples){
             int element1 = candidate.get(triple[0]);
             int element2 = candidate.get(triple[1]);
             int element3 = candidate.get(triple[2]);
             if(element1 == 1 && element2 == 1 && element3 == 1){
-                //System.out.println("Prohibited!");
-                //System.out.println(triple[0].toString() + ", " +triple[1].toString() + ", " + triple[2].toString() + ", ");
+                if(verbose) {
+                    System.out.println("Prohibited! " + decode(candidate));
+                    System.out.println(triple[0].toString() + ", " + triple[1].toString() + ", " + triple[2].toString() + ", ");
+                }
                 return true;
             }
         }
@@ -87,6 +89,7 @@ public class GA_QBFPT extends GA_QBF {
     public Solution<Integer> solve() {
 
         /* starts the initial population */
+        // populacao inicial nao contem triplas proibidas
         Population population = initializePopulation();
 
         bestChromosome = getBestChromosome(population);
@@ -109,10 +112,15 @@ public class GA_QBFPT extends GA_QBF {
 
             bestChromosome = getBestChromosome(population);
 
+
             if (fitness(bestChromosome) > bestSol.cost) {
                 bestSol = decode(bestChromosome);
                 if (verbose)
                     System.out.println("(Gen. " + g + ") BestSol = " + bestSol);
+
+                if(isProhibited(bestChromosome, true)){
+                    System.out.println("ERROR! Bestsol is prohibited! " + bestSol);
+                }
             }
 
         }
@@ -129,15 +137,79 @@ public class GA_QBFPT extends GA_QBF {
                 chromosome.add(rng.nextInt(2));
             }
 
-        } while (isProhibited(chromosome));
+        } while (isProhibited(chromosome, false));
 
         return chromosome;
+    }
+
+    @Override
+    protected Population crossover(Population parents) {
+
+        Population offsprings = new Population();
+
+        for (int i = 0; i < popSize; i = i + 2) {
+
+            Chromosome parent1 = parents.get(i);
+            Chromosome parent2 = parents.get(i + 1);
+
+            int crosspoint1 = rng.nextInt(chromosomeSize + 1);
+            int crosspoint2 = crosspoint1 + rng.nextInt((chromosomeSize + 1) - crosspoint1);
+
+            Chromosome offspring1 = new Chromosome();
+            Chromosome offspring2 = new Chromosome();
+
+            for (int j = 0; j < chromosomeSize; j++) {
+                if (j >= crosspoint1 && j < crosspoint2) {
+                    offspring1.add(parent2.get(j));
+                    offspring2.add(parent1.get(j));
+                } else {
+                    offspring1.add(parent1.get(j));
+                    offspring2.add(parent2.get(j));
+                }
+            }
+            if(!(isProhibited(offspring1, false))){
+                offsprings.add(offspring1);
+            }
+            else{
+                offsprings.add(parent1);
+            }
+            if(!(isProhibited(offspring2, false))){
+                offsprings.add(offspring2);
+            }
+            else{
+                offsprings.add(parent2);
+            }
+        }
+
+        return offsprings;
+
+    }
+
+    @Override
+    protected Population mutate(Population offsprings) {
+
+        for (Chromosome c : offsprings) {
+            for (int locus = 0; locus < chromosomeSize; locus++) {
+                if (rng.nextDouble() < mutationRate) {
+                    //deep copy
+                    Chromosome temp = (Chromosome) c.clone();
+                    mutateGene(temp, locus);
+                    // if the mutation does not result in a prohibited triple
+                    // commit the mutation to the original chromosome
+                    if(!(isProhibited(temp, false))){
+                        mutateGene(c, locus);
+                    }
+                }
+            }
+        }
+
+        return offsprings;
     }
 
     public static void main(String[] args) throws IOException {
 
         long startTime = System.currentTimeMillis();
-        GA_QBFPT ga = new GA_QBFPT(1000, 100, 1.0 / 100.0, "instances/qbf020");
+        GA_QBFPT ga = new GA_QBFPT(1000, 100, 1.0 / 100.0, "instances/qbf040");
         Solution<Integer> bestSol = ga.solve();
         System.out.println("maxVal = " + bestSol);
         long endTime = System.currentTimeMillis();
