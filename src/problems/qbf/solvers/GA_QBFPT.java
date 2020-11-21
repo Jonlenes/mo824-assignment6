@@ -68,6 +68,60 @@ public class GA_QBFPT extends GA_QBF {
 
     }
 
+    //Checa se o cromossomo forma uma tripla proibida
+    public boolean isProhibited(Chromosome candidate){
+        for(Integer[] triple : triples){
+            int element1 = candidate.get(triple[0]);
+            int element2 = candidate.get(triple[1]);
+            int element3 = candidate.get(triple[2]);
+            if(element1 == 1 && element2 == 1 && element3 == 1){
+                //System.out.println("Prohibited!");
+                //System.out.println(triple[0].toString() + ", " +triple[1].toString() + ", " + triple[2].toString() + ", ");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Solution<Integer> solve() {
+
+        /* starts the initial population */
+        Population population = initializePopulation();
+
+        bestChromosome = getBestChromosome(population);
+        bestSol = decode(bestChromosome);
+        System.out.println("(Gen. " + 0 + ") BestSol = " + bestSol);
+        /*
+         * enters the main loop and repeats until a given number of generations
+         */
+        for (int g = 1; g <= generations; g++) {
+
+            Population parents = selectParents(population);
+
+            Population offsprings = crossover(parents);
+
+            Population mutants = mutate(offsprings);
+
+            Population newpopulation = selectPopulation(mutants);
+
+            population = newpopulation;
+
+            bestChromosome = getBestChromosome(population);
+
+            if (fitness(bestChromosome) > bestSol.cost) {
+                bestSol = decode(bestChromosome);
+                if (verbose)
+                    System.out.println("(Gen. " + g + ") BestSol = " + bestSol);
+            }
+
+        }
+
+        return bestSol;
+    }
+
+
+
     public static void main(String[] args) throws IOException {
 
         long startTime = System.currentTimeMillis();
