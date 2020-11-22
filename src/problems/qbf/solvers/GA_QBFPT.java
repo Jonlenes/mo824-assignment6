@@ -130,16 +130,32 @@ public class GA_QBFPT extends GA_QBF {
 
     @Override
     protected Chromosome generateRandomChromosome() {
-        Chromosome chromosome;
-        do {
-            chromosome = new Chromosome();
-            for (int i = 0; i < chromosomeSize; i++) {
-                chromosome.add(rng.nextInt(2));
-            }
-
-        } while (isProhibited(chromosome, false));
+        Chromosome chromosome = new Chromosome();
+        for (int i = 0; i < chromosomeSize; i++) {
+            chromosome.add(rng.nextInt(2));
+        }
+        //System.out.println("Cromossomo: " + decode(chromosome));
+        if(isProhibited(chromosome, false)){
+          chromosome = repairProhibitedChromosome(chromosome);
+        }
 
         return chromosome;
+    }
+
+    public Chromosome repairProhibitedChromosome(Chromosome candidate){
+        do{
+            for(Integer[] triple : triples){
+                int element1 = candidate.get(triple[0]);
+                int element2 = candidate.get(triple[1]);
+                int element3 = candidate.get(triple[2]);
+                if(element1 == 1 && element2 == 1 && element3 == 1){
+                    int element = rng.nextInt(3);
+                    mutateGene(candidate, triple[element]);
+                    break;
+                }
+            }
+        }while(isProhibited(candidate, false));
+        return candidate;
     }
 
     @Override
@@ -209,7 +225,7 @@ public class GA_QBFPT extends GA_QBF {
     public static void main(String[] args) throws IOException {
 
         long startTime = System.currentTimeMillis();
-        GA_QBFPT ga = new GA_QBFPT(1000, 100, 1.0 / 100.0, "instances/qbf040");
+        GA_QBFPT ga = new GA_QBFPT(1000, 100, 1.0 / 100.0, "instances/qbf400");
         Solution<Integer> bestSol = ga.solve();
         System.out.println("maxVal = " + bestSol);
         long endTime = System.currentTimeMillis();
