@@ -275,7 +275,7 @@ public class GA_QBFPT extends GA_QBF {
 
         long startTime = System.currentTimeMillis();
         GA_QBFPT ga = new GA_QBFPT(1000, 100, 1.0 / 100.0, "instances/qbf400");
-        Solution<Integer> bestSol = ga.solve(true, 0.5);
+        Solution<Integer> bestSol = ga.solve(true, 0.25);
         System.out.println("maxVal = " + bestSol);
         long endTime = System.currentTimeMillis();
         long totalTime = endTime - startTime;
