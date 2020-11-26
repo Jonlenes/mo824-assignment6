@@ -4,6 +4,7 @@ import solutions.Solution;
 
 import java.io.IOException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class GA_QBFPT extends GA_QBF {
@@ -85,8 +86,7 @@ public class GA_QBFPT extends GA_QBF {
         return false;
     }
 
-    @Override
-    public Solution<Integer> solve() {
+    public Solution<Integer> solve(boolean uniformCrossover, double p) {
 
         /* starts the initial population */
         // populacao inicial nao contem triplas proibidas
@@ -101,8 +101,13 @@ public class GA_QBFPT extends GA_QBF {
         for (int g = 1; g <= generations; g++) {
 
             Population parents = selectParents(population);
+            Population offsprings = null;
 
-            Population offsprings = crossover(parents);
+            if (uniformCrossover) {
+                offsprings = uniform_crossover(parents, p);
+            } else {
+                offsprings = crossover(parents);
+            }
 
             Population mutants = mutate(offsprings);
 
@@ -201,6 +206,50 @@ public class GA_QBFPT extends GA_QBF {
 
     }
 
+    protected Population uniform_crossover(Population parents, double p) {
+        Population offsprings = new Population();
+
+        for (int i = 0; i < popSize; i = i + 2) {
+            Chromosome parent1 = parents.get(i);
+            Chromosome parent2 = parents.get(i + 1);
+
+            /* Cria máscara de booleanos para o uniform crossover com base em p */
+            ArrayList<Boolean> mask = new ArrayList<Boolean>(chromosomeSize);
+            for (int j = 0; j < chromosomeSize; j++) {
+                boolean r = rng.nextDouble() < p;
+                mask.add(r);
+            }
+
+            Chromosome offspring1 = new Chromosome();
+            Chromosome offspring2 = new Chromosome();
+
+            /* Faz o crossover com base na máscara */
+            for (int j = 0; j < chromosomeSize; j++) {
+                if (mask.get(j)) {
+                    offspring1.add(parent2.get(j));
+                    offspring2.add(parent1.get(j));
+                } else {
+                    offspring1.add(parent1.get(j));
+                    offspring2.add(parent2.get(j));
+                }
+            }
+
+            if (!(isProhibited(offspring1, false))) {
+                offsprings.add(offspring1);
+            } else {
+                offsprings.add(parent1);
+            }
+
+            if (!(isProhibited(offspring2, false))) {
+                offsprings.add(offspring2);
+            } else {
+                offsprings.add(parent2);
+            }
+        }
+
+        return offsprings;
+    }
+
     @Override
     protected Population mutate(Population offsprings) {
 
@@ -226,7 +275,7 @@ public class GA_QBFPT extends GA_QBF {
 
         long startTime = System.currentTimeMillis();
         GA_QBFPT ga = new GA_QBFPT(1000, 100, 1.0 / 100.0, "instances/qbf400");
-        Solution<Integer> bestSol = ga.solve();
+        Solution<Integer> bestSol = ga.solve(true, 0.5);
         System.out.println("maxVal = " + bestSol);
         long endTime = System.currentTimeMillis();
         long totalTime = endTime - startTime;
