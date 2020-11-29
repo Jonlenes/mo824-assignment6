@@ -18,6 +18,8 @@ public class GA_QBFPT extends GA_QBF {
     private final Integer pi1_h = 193;
     private final Integer pi2_h = 1093;
     private boolean latinHypercube = false;
+    private boolean uniformCrossover = false;
+    private double p = 0;
 
     private Integer l(Integer u, Integer pi1, Integer pi2) {
         return 1 + ((pi1 * (u - 1) + pi2) % ObjFunction.getDomainSize());
@@ -52,9 +54,12 @@ public class GA_QBFPT extends GA_QBF {
      *                     should be read.
      * @throws IOException Necessary for I/O operations.
      */
-    public GA_QBFPT(Integer generations, Integer popSize, Double mutationRate, String filename, boolean latinHypercube) throws IOException {
+    public GA_QBFPT(Integer generations, Integer popSize, Double mutationRate, String filename, 
+    		boolean latinHypercube, boolean uniformCrossover, Double p) throws IOException {
         super(generations, popSize, mutationRate, filename);
         this.latinHypercube = latinHypercube;
+        this.uniformCrossover = uniformCrossover;
+        this.p = p;
         Integer l_u_g, l_u_h, g_u, h_u;
         int size = ObjFunction.getDomainSize();
         triples = new Integer[size][3];
@@ -89,7 +94,7 @@ public class GA_QBFPT extends GA_QBF {
         return false;
     }
 
-    public Solution<Integer> solve(boolean uniformCrossover, double p) {
+    public Solution<Integer> solve() {
 
     	/* Limitar o tempo em aproximadamente 30 min*/
 		Integer timeoutSeconds = 1800;
@@ -310,8 +315,8 @@ public class GA_QBFPT extends GA_QBF {
     public static void main(String[] args) throws IOException {
 
         long startTime = System.currentTimeMillis();
-        GA_QBFPT ga = new GA_QBFPT(1000, 100, 1.0 / 100.0, "instances/qbf060", true);
-        Solution<Integer> bestSol = ga.solve(false, 0);
+        GA_QBFPT ga = new GA_QBFPT(1000, 100, 1.0 / 100.0, "instances/qbf060", true, false, 0.0);
+        Solution<Integer> bestSol = ga.solve();
         System.out.println("maxVal = " + bestSol);
         long endTime = System.currentTimeMillis();
         long totalTime = endTime - startTime;
