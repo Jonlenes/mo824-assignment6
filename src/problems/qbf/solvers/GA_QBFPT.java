@@ -6,6 +6,8 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class GA_QBFPT extends GA_QBF {
 
@@ -89,7 +91,30 @@ public class GA_QBFPT extends GA_QBF {
 
     public Solution<Integer> solve(boolean uniformCrossover, double p) {
 
-        /* starts the initial population */
+    	/* Limitar o tempo em aproximadamente 30 min*/
+		Integer timeoutSeconds = 1800;
+		Timer timer = new Timer();
+		
+		class RemindTask extends TimerTask{
+			private Boolean timeout = false;
+			
+			public Boolean timeout() {
+				return this.timeout;
+			}
+			
+			public void run() {
+	            timer.cancel();
+	            timeout = true;
+	        }
+		};
+		
+		RemindTask task = new RemindTask();
+		// This function use milliseconds
+		timer.schedule(task, timeoutSeconds*1000);
+		
+    	
+    	
+    	/* starts the initial population */
         // populacao inicial nao contem triplas proibidas
         Population population = initializePopulation();
 
@@ -128,6 +153,12 @@ public class GA_QBFPT extends GA_QBF {
                     System.out.println("ERROR! Bestsol is prohibited! " + bestSol);
                 }
             }
+            
+			//Verifica se deu o timeout
+			if(task.timeout()) {
+				System.out.println("Timeout");
+				break;
+			}
 
         }
 
