@@ -15,6 +15,7 @@ public class GA_QBFPT extends GA_QBF {
     private final Integer pi2_g = 1031;
     private final Integer pi1_h = 193;
     private final Integer pi2_h = 1093;
+    private boolean latinHypercube = false;
 
     private Integer l(Integer u, Integer pi1, Integer pi2) {
         return 1 + ((pi1 * (u - 1) + pi2) % ObjFunction.getDomainSize());
@@ -49,9 +50,9 @@ public class GA_QBFPT extends GA_QBF {
      *                     should be read.
      * @throws IOException Necessary for I/O operations.
      */
-    public GA_QBFPT(Integer generations, Integer popSize, Double mutationRate, String filename) throws IOException {
+    public GA_QBFPT(Integer generations, Integer popSize, Double mutationRate, String filename, boolean latinHypercube) throws IOException {
         super(generations, popSize, mutationRate, filename);
-
+        this.latinHypercube = latinHypercube;
         Integer l_u_g, l_u_h, g_u, h_u;
         int size = ObjFunction.getDomainSize();
         triples = new Integer[size][3];
@@ -136,14 +137,18 @@ public class GA_QBFPT extends GA_QBF {
     @Override
     protected Chromosome generateRandomChromosome() {
         Chromosome chromosome = new Chromosome();
-        for (int i = 0; i < chromosomeSize; i++) {
-            chromosome.add(rng.nextInt(2));
+         {
+        	for (int i = 0; i < chromosomeSize; i++) {
+        		if (latinHypercube)
+        			chromosome.add(rng.nextInt(popSize) % 2);
+        		else
+        			chromosome.add(rng.nextInt(2));
+            }
+            if(isProhibited(chromosome, false)){
+              chromosome = repairProhibitedChromosome(chromosome);
+            }
         }
-        //System.out.println("Cromossomo: " + decode(chromosome));
-        if(isProhibited(chromosome, false)){
-          chromosome = repairProhibitedChromosome(chromosome);
-        }
-
+        
         return chromosome;
     }
 
@@ -274,8 +279,8 @@ public class GA_QBFPT extends GA_QBF {
     public static void main(String[] args) throws IOException {
 
         long startTime = System.currentTimeMillis();
-        GA_QBFPT ga = new GA_QBFPT(1000, 100, 1.0 / 100.0, "instances/qbf400");
-        Solution<Integer> bestSol = ga.solve(true, 0.25);
+        GA_QBFPT ga = new GA_QBFPT(1000, 100, 1.0 / 100.0, "instances/qbf060", true);
+        Solution<Integer> bestSol = ga.solve(false, 0);
         System.out.println("maxVal = " + bestSol);
         long endTime = System.currentTimeMillis();
         long totalTime = endTime - startTime;
