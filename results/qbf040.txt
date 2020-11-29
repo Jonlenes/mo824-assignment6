@@ -1,0 +1,40 @@
+latinHypercube_100_1
+Best solution: Solution: cost=[366.0], size=[20], elements=[1, 2, 4, 7, 9, 11, 14, 15, 18, 19, 21, 23, 24, 25, 26, 31, 32, 33, 34, 36]
+Time: 3.642seg 
+
+latinHypercube_200_2
+Best solution: Solution: cost=[366.0], size=[20], elements=[1, 2, 4, 7, 9, 11, 14, 15, 18, 19, 21, 23, 24, 25, 26, 31, 32, 33, 34, 36]
+Time: 7.459seg 
+
+latinHypercube_100_2
+Best solution: Solution: cost=[366.0], size=[20], elements=[1, 2, 4, 7, 9, 11, 14, 15, 18, 19, 21, 23, 24, 25, 26, 31, 32, 33, 34, 36]
+Time: 3.524seg 
+
+padrao_100_1
+Best solution: Solution: cost=[366.0], size=[20], elements=[1, 2, 4, 7, 9, 11, 14, 15, 18, 19, 21, 23, 24, 25, 26, 31, 32, 33, 34, 36]
+Time: 3.466seg 
+
+padrao_200_2
+Best solution: Solution: cost=[366.0], size=[20], elements=[1, 2, 4, 7, 9, 11, 14, 15, 18, 19, 21, 23, 24, 25, 26, 31, 32, 33, 34, 36]
+Time: 8.216seg 
+
+padrao_100_2
+Best solution: Solution: cost=[366.0], size=[20], elements=[1, 2, 4, 7, 9, 11, 14, 15, 18, 19, 21, 23, 24, 25, 26, 31, 32, 33, 34, 36]
+Time: 5.397seg 
+
+uniformCrossover_100_1_0.25
+Best solution: Solution: cost=[366.0], size=[20], elements=[1, 2, 4, 7, 9, 11, 14, 15, 18, 19, 21, 23, 24, 25, 26, 31, 32, 33, 34, 36]
+Time: 6.107seg 
+
+uniformCrossover_200_2_0.25
+Best solution: Solution: cost=[366.0], size=[20], elements=[1, 2, 4, 7, 9, 11, 14, 15, 18, 19, 21, 23, 24, 25, 26, 31, 32, 33, 34, 36]
+Time: 8.709seg 
+
+uniformCrossover_100_1_0.50
+Best solution: Solution: cost=[366.0], size=[20], elements=[1, 2, 4, 7, 9, 11, 14, 15, 18, 19, 21, 23, 24, 25, 26, 31, 32, 33, 34, 36]
+Time: 4.808seg 
+
+uniformCrossover_200_2_0.50
+Best solution: Solution: cost=[366.0], size=[20], elements=[1, 2, 4, 7, 9, 11, 14, 15, 18, 19, 21, 23, 24, 25, 26, 31, 32, 33, 34, 36]
+Time: 6.347seg 
+
